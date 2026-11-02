@@ -1,0 +1,7 @@
+weight,change,segment_rank_rho,route_overlap_mean,routes_unchanged_pct
+lighting,-0.15,0.987,0.985,93.3
+lighting,+0.15,0.994,0.953,86.7
+activity,-0.15,0.997,0.925,81.7
+activity,+0.15,0.998,0.969,88.3
+context,-0.15,0.976,0.935,83.3
+context,+0.15,0.988,0.938,86.7

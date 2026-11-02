@@ -1,0 +1,19 @@
+{
+  "osm_snapshot": "2026-11-02T07:52:02.284485+00:00",
+  "segments": 74288,
+  "km": 4434.2,
+  "coverage": {
+    "segments with lit=* tag (%)": 0.5,
+    "segments with a mapped lamp (%)": 0.0,
+    "places with opening_hours (%)": 15.1,
+    "places with parseable hours (%)": 14.9,
+    "segments with any place in 50 m (%)": 14.7
+  },
+  "ntl_coverage_pct": 77.9,
+  "coverage_bias": {
+    "cells": 271,
+    "confidence p10": 0.295,
+    "confidence p90": 0.383,
+    "confidence vs night light (rho)": 0.632
+  }
+}
