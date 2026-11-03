@@ -254,6 +254,15 @@ input[type="range"] { width: 100%; accent-color: var(--sodium); }
 <script src="config.js"></script>
 <script>
 const DATA = /*DATA*/null;
+if (!DATA) {
+  // This file is the template; scripts/build_web.py inserts the data to make
+  // index.html. Opened directly, say so instead of failing on missing data.
+  document.body.innerHTML = '<p style="font:16px system-ui;padding:24px;color:#ece7dc;' +
+    'background:#0b1120;min-height:100vh;margin:0">This is the map template with no data in it. ' +
+    'Open <a style="color:#f2a33a" href="index.html">index.html</a> instead, or build it with ' +
+    '<code>python scripts/build_web.py</code>.</p>';
+  throw new Error("template opened without data; open index.html");
+}
 
 // ── data ──────────────────────────────────────────────────────────────
 const P = DATA.params;
@@ -459,10 +468,8 @@ const wx = px => (px - W / 2) / view.s + view.cx;
 const wy = py => view.cy - (py - H / 2) / view.s;
 
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-// Low end is a cool, still-visible blue-violet: "dark and quiet" streets must
-// read as streets against a dark basemap, not disappear into it.
-const RAMP_SCORE = ["#4b5cc4", "#7068c0", "#9a7fae", "#c99566", "#eba443", "#ffcf70"];
-const RAMP_CONF = ["#6a4f9c", "#7a64b4", "#6f86c4", "#5aa6c4", "#62c4b8", "#a3e6d6"];
+const RAMP_SCORE = ["#2a3550", "#3d4a66", "#6b6a6a", "#a57c45", "#d9933a", "#f7b955"];
+const RAMP_CONF = ["#3a2f4f", "#4b3f6d", "#4f5d8a", "#4a83a3", "#56a9b3", "#8fd3c8"];
 let mode = "score";
 const bucket = v => Math.min(5, Math.floor(v * 6));
 
@@ -517,8 +524,12 @@ function drawTiles(layer) {
   const tx0 = Math.max(0, Math.floor((wx(0) + HALF) / T)), tx1 = Math.min(n - 1, Math.floor((wx(W) + HALF) / T));
   const ty0 = Math.max(0, Math.floor((HALF - wy(0)) / T)), ty1 = Math.min(n - 1, Math.floor((HALF - wy(H)) / T));
   if ((tx1 - tx0 + 1) * (ty1 - ty0 + 1) > 120) return;
+  // basemap only inside the study area: no tiles requested or drawn beyond it
+  const bx0 = sx(minX), by0 = sy(maxY), bx1 = sx(maxX), by1 = sy(minY);
+  ctx.save(); ctx.beginPath(); ctx.rect(bx0, by0, bx1 - bx0, by1 - by0); ctx.clip();
   for (let x = tx0; x <= tx1; x++) for (let y = ty0; y <= ty1; y++) {
     const px = sx(-HALF + x * T), py = sy(HALF - y * T), sz = T * view.s;
+    if (px > bx1 || py > by1 || px + sz < bx0 || py + sz < by0) continue;
     const t = tile(layer, z, x, y, true);
     if (t.ok) { ctx.drawImage(t.img, px, py, sz + 0.5, sz + 0.5); continue; }
     for (let up = 1; up <= 4; up++) {          // a coarser cached tile while this one loads
@@ -530,6 +541,7 @@ function drawTiles(layer) {
       }
     }
   }
+  ctx.restore();
 }
 
 function draw() {
@@ -537,7 +549,8 @@ function draw() {
   drawTiles(TILES.base);
   const onBase = basemap && tileOk > 0;
   if (onBase) {                 // push the basemap back so the scored streets lead
-    ctx.fillStyle = "rgba(9, 13, 26, 0.55)"; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "rgba(9, 13, 26, 0.55)";
+    ctx.fillRect(sx(minX), sy(maxY), (maxX - minX) * view.s, (maxY - minY) * view.s);
   }
   const ramp = mode === "score" ? RAMP_SCORE : RAMP_CONF;
   const val = mode === "score" ? eScore : eConf;
