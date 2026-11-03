@@ -20,7 +20,8 @@ OSM snapshot of 2 November 2026: **74,288 walkable street segments, 4,434 km**
 in a 17 × 13 km box (22.47–22.62°N, 88.30–88.43°E) covering the Kolkata
 Municipal Corporation core, the Howrah riverfront and Salt Lake.
 
-**Safer routes are cheap.** Across 200 random trips of 0.8–4 km at 22:00:
+**Safer routes are cheap.** Across 200 random trips at 22:00, with ends 0.8–4 km
+apart in a straight line (median walk 3.6 km):
 
 | | Shortest walk | Safer walk (β = 3) |
 |---|---|---|
@@ -128,7 +129,7 @@ from the map at midnight and 02:00.
 There is no city-wide record of how safe streets feel at night, so
 `nightwalk.evaluate` runs the checks that do not need one:
 
-1. **Route effect.** Over random 0.8–4 km trips: how often the safer route
+1. **Route effect.** Over random trips whose ends are 0.8–4 km apart: how often the safer route
    differs, the detour it costs, and the exposed distance it saves.
 2. **Weight sensitivity.** Each weight moves ±0.15. Rank correlation of
    segment scores and overlap of chosen routes show whether conclusions depend
@@ -193,6 +194,7 @@ it with GitHub Pages. Routing runs in the browser, so no server is needed.
 ## Repository layout
 
 ```
+index.html       redirects the GitHub Pages site to web/
 src/nightwalk/
   config.py      study area, weights, priors, routing parameters
   fetch.py       Overpass queries (streets, lamps, places, transit, land use,
@@ -204,7 +206,10 @@ src/nightwalk/
   route.py       shortest / safer / walk + metro routing
   evaluate.py    validation checks without ground truth
   export.py      compact graph bundle and search index for the browser
+scripts/build_web.py  fills the template with the data bundle -> web/index.html
 web/template.html  the map: canvas renderer, basemap tiles, search, Dijkstra
+web/config.js    optional CARTO basemap key (no rebuild needed)
+docs/map.png     screenshot used above
 tests/           synthetic city and 27 tests
 results/         evaluation outputs for the Kolkata run
 ```
@@ -234,6 +239,12 @@ Nominatim (OpenStreetMap), used lightly and only on request. VIIRS night-time
 lights from the Earth Observation Group, Payne Institute. No personal data is
 used; "use my location" stays in the browser.
 
+## Author
+
+Ananya Saha, IIT (BHU) Varanasi · [GitHub](https://github.com/ananya-fml) ·
+[LinkedIn](https://www.linkedin.com/in/ananya-saha-404635225)
+
 ## Licence
 
-Code: MIT. See `LICENSE`.
+Code: MIT. See `LICENSE`. Map data © OpenStreetMap contributors (ODbL); see
+`data/ATTRIBUTION.md`.

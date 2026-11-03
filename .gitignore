@@ -1,6 +1,8 @@
 # Raw OSM snapshots and rasters are large; regenerate with nightwalk.fetch
 data/raw/
 data/processed/
+# the data bundle (~9 MB) is embedded in web/index.html at build time
+web/data.json
 *.tif
 __pycache__/
 *.egg-info/

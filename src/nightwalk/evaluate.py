@@ -126,7 +126,7 @@ def run(edges, n_pairs=200, verbose=True):
     cov, cells = coverage_by_area(edges)
     if verbose:
         d = eff
-        print(f"\nROUTE EFFECT ({len(d)} random trips, 0.8-4 km)")
+        print(f"\nROUTE EFFECT ({len(d)} random trips, ends 0.8-4 km apart)")
         print(f"  safer route differs from shortest: {100*d.differs.mean():.0f}%")
         print(f"  median detour: {d.detour_pct.median():.1f}%  (p90 {d.detour_pct.quantile(.9):.1f}%)")
         print(f"  exposed distance: median {d.exposed_short_m.median():.0f} m -> "
